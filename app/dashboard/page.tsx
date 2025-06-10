@@ -155,7 +155,7 @@ export default async function Dashboard() {
         <div className="bg-white p-6 rounded-lg shadow-md border">
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total in Feed</h3>
           {stats.success ? (
-            <p className="text-2xl font-bold text-blue-600">{zeroDayVulns.filter(v => v.source === 'NVD Recent').length}</p>
+            <p className="text-2xl font-bold text-blue-600">{stats.totalVulnerabilities}</p>
           ) : (
             <p className="text-red-500">Error</p>
           )}
@@ -215,11 +215,9 @@ export default async function Dashboard() {
                     <div className="flex items-center gap-2">
                       <span className={`w-3 h-3 rounded-full ${getSourceBadgeColor(vuln.source)}`}></span>
                       <span className="text-sm font-medium text-gray-600">{vuln.source}</span>
-                      {vuln.source === 'CISA KEV' && (
-                        <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded">
-                          ACTIVELY EXPLOITED
-                        </span>
-                      )}
+                      {vuln.source === 'CISA KEV'
+
+                      }
                     </div>
                     <span className={`px-2 py-1 text-xs font-medium rounded border ${getSeverityColor(vuln.severity)}`}>
                       {vuln.severity}
@@ -251,11 +249,7 @@ export default async function Dashboard() {
                     <div>
                       <span className="font-medium">Published:</span> {new Date(vuln.published).toLocaleDateString()}
                     </div>
-                    {vuln.source === 'CISA KEV' && vuln.dueDate && (
-                      <div className="text-red-600 font-medium">
-                        Due: {new Date(vuln.dueDate).toLocaleDateString()}
-                      </div>
-                    )}
+                    {vuln.source === 'CISA KEV'}
                   </div>
                   
                   <div className="flex gap-2">
