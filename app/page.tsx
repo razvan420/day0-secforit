@@ -11,6 +11,8 @@ interface Vulnerability {
   link: string;
   cveId?: string;
   cvssScore?: number;
+  vendor?: string;
+  product?: string;
 }
 
 async function fetchLatestVulnerabilities(): Promise<Vulnerability[]> {
