@@ -155,7 +155,7 @@ export default async function Dashboard() {
         <div className="bg-white p-6 rounded-lg shadow-md border">
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total in Feed</h3>
           {stats.success ? (
-            <p className="text-2xl font-bold text-blue-600">{stats.totalVulnerabilities}</p>
+            <p className="text-2xl font-bold text-blue-600">{zeroDayVulns.filter(v => v.source === 'NVD Recent').length}</p>
           ) : (
             <p className="text-red-500">Error</p>
           )}
