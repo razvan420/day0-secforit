@@ -24,6 +24,7 @@
       "@/components/*": ["./components/*"],
       "@/lib/*": ["./lib/*"],
       "@/types/*": ["./types/*"],
+      "@/globals  /*": ["./globals/*"],
       "@/utils/*": ["./utils/*"],
       "@/actions/*": ["./app/actions/*"],
       "@/styles/*": ["./styles/*"]
@@ -43,6 +44,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
+    "**/*.css",
     "**/*.tsx",
     ".next/types/**/*.ts",
     "types/**/*.ts"

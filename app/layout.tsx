@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import type { Viewport } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
+import './globals.css'  // No default import
 const inter = Inter({ subsets: ['latin'] })
+
 
 export const metadata: Metadata = {
   title: 'ZeroDay Intelligence - Real-time Vulnerability Intelligence',
