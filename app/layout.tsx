@@ -6,25 +6,24 @@ const inter = Inter({ subsets: ['latin'] })
 
 
 export const metadata: Metadata = {
-  title: 'ZeroDay Intelligence - Real-time Vulnerability Intelligence',
-  description: 'Professional vulnerability tracking with real-time data from CISA KEV, NVD, and GitHub Security Advisories. Enhanced with EPSS exploitation probability scoring and threat intelligence.',
-  keywords: 'vulnerabilities, CVE, CISA, NVD, zero-day, security, RSS feed, cybersecurity, threat intelligence, EPSS, exploit prediction',
-  authors: [{ name: 'Razvan @Stefanini CSS' }],
+ title: 'VulnWatch | Real-time Vulnerability Intelligence Platform',
+  description: 'Stay ahead of cyber threats with our comprehensive vulnerability tracking platform. Get instant alerts from CISA KEV, NVD, and GitHub Security Advisories with EPSS risk scoring and actionable threat intelligence.',
+keywords: 'vulnerability scanner, CVE database, CISA KEV tracker, cybersecurity dashboard, threat intelligence platform, zero-day alerts, security monitoring, exploit prediction, vulnerability management, infosec tools, Lisman Razvan, Stefanini, vulnerability assessment, security intelligence, cyber threat monitoring, NVD database, GitHub security advisories, EPSS scoring, exploit likelihood, vulnerability feeds, security alerts, penetration testing, risk assessment, security operations center, SOC tools, incident response, threat hunting, malware analysis, security automation, vulnerability prioritization, patch management, security compliance, cyber defense, threat detection, security research, bug bounty, responsible disclosure, security advisory, exploit database, proof of concept, attack vector analysis, threat landscape, cyber intelligence, security metrics, vulnerability lifecycle, threat modeling, security posture, risk mitigation, cyber resilience, security orchestration, threat feeds, IOC indicators, MITRE ATT&CK, security frameworks, compliance monitoring, security benchmarks, penetration testing tools, red team exercises, blue team defense, purple team collaboration, security awareness, cyber hygiene, attack surface management, digital forensics, incident handling, security governance, risk management framework, cybersecurity maturity',  authors: [{ name: 'Razvan Lisman', url: 'https://secforit.ro/' }],
   robots: 'index, follow',
   openGraph: {
-    title: 'ZeroDay Intelligence - Real-time Vulnerability Intelligence',
-    description: 'Professional vulnerability tracking with threat intelligence from trusted government and community sources',
+    title: 'VulnWatch',
+    description: 'Professional-grade vulnerability tracking and threat intelligence. Real-time monitoring of critical security vulnerabilitie.',
     type: 'website',
     url: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-    siteName: 'ZeroDay Intelligence',
+    siteName: 'VulnWatch',
     images: [
       {
-        url: '/security-og-image.png',
+        url: '/og-image.jpg', // Add this image to your public folder
         width: 1200,
         height: 630,
-        alt: 'ZeroDay Intelligence - Vulnerability Tracking'
+        alt: 'VulnWatch Pro - Vulnerability Intelligence Dashboard',
       }
-    ]
+    ],
   },
   twitter: {
     card: 'summary_large_image',
