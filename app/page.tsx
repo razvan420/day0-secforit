@@ -141,8 +141,17 @@ async function fetchLatestVulnerabilities(): Promise<Vulnerability[]> {
       console.error('GitHub fetch failed:', githubError);
     }
 
-    return vulnerabilities.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
-    
+return vulnerabilities.sort((a, b) => {
+  // Parse dates as UTC explicitly
+  const parseUTC = (dateStr: string) => {
+    if (dateStr.includes('T') && !dateStr.includes('Z')) {
+      return new Date(dateStr + 'Z').getTime();
+    }
+    return new Date(dateStr).getTime();
+  };
+  
+  return parseUTC(b.published) - parseUTC(a.published);
+});    
   } catch (error) {
     console.error('Error fetching vulnerabilities:', error);
     return [];
@@ -282,7 +291,7 @@ export default async function Home() {
             Real-time vulnerability intelligence from CISA KEV, NVD, and GitHub Security Advisories
           </p>
           <p className="text-sm text-green-400/60 font-mono tracking-wider mb-8">
-            Powered by razvan @SECFORIT
+            by razvan @SECFORIT
           </p>
           
           {/* Stats Cards with SECFORIT Theme */}
