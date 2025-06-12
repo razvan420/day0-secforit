@@ -12,7 +12,7 @@ keywords: 'vulnerability scanner, CVE database, CISA KEV tracker, cybersecurity 
   robots: 'index, follow',
   openGraph: {
     title: 'VulnWatch',
-    description: 'Professional-grade vulnerability tracking and threat intelligence. Real-time monitoring of critical security vulnerabilitie.',
+    description: 'Professional-grade vulnerability tracking and threat intelligence. Real-time monitoring of critical vulnerabilities.',
     type: 'website',
     url: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
     siteName: 'VulnWatch',
