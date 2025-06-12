@@ -1,24 +1,134 @@
 {
-  "name": "day0",
-  "version": "0.1.0",
+  "name": "zeroday-intelligence",
+  "version": "2.0.0",
+  "description": "Professional vulnerability tracking with real-time intelligence from CISA KEV, NVD, and GitHub Security Advisories",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "analyze": "ANALYZE=true npm run build",
+    "clean": "rm -rf .next && rm -rf node_modules/.cache",
+    "export": "next export",
+    "validate-rss": "node scripts/validate-rss.js",
+    "check-sources": "node scripts/check-sources.js",
+    "security-audit": "npm audit && npm outdated",
+    "prepare": "husky install",
+    "pre-commit": "lint-staged",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
-    "next": "15.3.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20.19.0",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.0.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-import": "^2.29.1",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.2.0",
+    "next-sitemap": "^4.2.3",
+    "postcss": "^8.4.32",
+    "prettier": "^3.1.1",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.3",
+    "webpack-bundle-analyzer": "^4.10.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/zeroday-intelligence.git"
+  },
+  "keywords": [
+    "vulnerability",
+    "security",
+    "CVE",
+    "CISA",
+    "NVD",
+    "RSS",
+    "zero-day",
+    "threat-intelligence",
+    "cybersecurity",
+    "EPSS",
+    "next.js",
+    "react",
+    "typescript"
+  ],
+  "author": {
+    "name": "Security Intelligence Team",
+    "email": "security@example.com",
+    "url": "https://github.com/yourusername"
+  },
+  "license": "MIT",
+  "homepage": "https://yourdomain.com",
+  "bugs": {
+    "url": "https://github.com/yourusername/zeroday-intelligence/issues"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+    "testPathIgnorePatterns": ["<rootDir>/.next/", "<rootDir>/node_modules/"],
+    "collectCoverageFrom": [
+      "app/**/*.{js,jsx,ts,tsx}",
+      "!app/**/*.d.ts",
+      "!app/**/layout.tsx",
+      "!app/**/loading.tsx",
+      "!app/**/not-found.tsx"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70,
+        "statements": 70
+      }
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "volta": {
+    "node": "18.19.0",
+    "npm": "10.2.3"
   }
 }
