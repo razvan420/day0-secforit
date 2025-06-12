@@ -290,11 +290,11 @@ export default async function Home() {
           <p className="text-xl text-green-300/80 mb-2 max-w-3xl mx-auto">
             Real-time vulnerability intelligence from CISA KEV, NVD, and GitHub Security Advisories
           </p>
-<div className="inline-block scanner px-6 py-2 mb-8 border border-green-500/30 bg-green-500/5">
-  <p className="text-sm text-green-400/80 font-mono tracking-wider">
-   razvan @stefanini CSS
-  </p>
-</div>
+          <div className="inline-block scanner px-6 py-2 mb-8 border border-green-500/30 bg-green-500/5">
+            <p className="text-sm text-green-400/80 font-mono tracking-wider">
+            Code by razvan @stefanini 
+            </p>
+          </div>
 
           
           {/* Stats Cards with SECFORIT Theme */}
