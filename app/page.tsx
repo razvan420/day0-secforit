@@ -252,8 +252,8 @@ export default async function Home() {
                 </p>
               </div>
               <div className="hidden md:block ml-8 border-l border-green-500/30 pl-8">
-                <h2 className="text-lg font-semibold text-green-100">Zero-Day Intelligence</h2>
-                <p className="text-sm text-green-300/60">Real-time vulnerability intelligence</p>
+                <h2 className="text-lg font-semibold text-green-100">Vulnerability Tracker</h2>
+                <p className="text-sm text-green-300/60">Real-time vulnerability intelligence monitoring for active threats.</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -290,9 +290,12 @@ export default async function Home() {
           <p className="text-xl text-green-300/80 mb-2 max-w-3xl mx-auto">
             Real-time vulnerability intelligence from CISA KEV, NVD, and GitHub Security Advisories
           </p>
-          <p className="text-sm text-green-400/60 font-mono tracking-wider mb-8">
-            by razvan @SECFORIT
-          </p>
+<div className="inline-block scanner px-6 py-2 mb-8 border border-green-500/30 bg-green-500/5">
+  <p className="text-sm text-green-400/80 font-mono tracking-wider">
+   razvan @stefanini CSS
+  </p>
+</div>
+
           
           {/* Stats Cards with SECFORIT Theme */}
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
