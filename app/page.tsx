@@ -221,11 +221,124 @@ function SecforitLogo({ className = "w-8 h-8" }: { className?: string }) {
   );
 }
 
+// Component for rendering vulnerability cards
+function VulnerabilityCard({ vuln }: { vuln: Vulnerability }) {
+  return (
+    <article className="bg-gray-900/80 backdrop-blur-sm rounded-xl border border-green-500/20 shadow-lg hover:shadow-xl hover:border-green-500/40 transition-all duration-200 overflow-hidden">
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getSourceBadge(vuln.source)}`}>
+              {vuln.source}
+            </span>
+            {vuln.source === 'CISA KEV' && (
+              <span className="px-2 py-1 text-xs font-medium bg-red-900/50 text-red-300 rounded-full border border-red-500/50">
+                ACTIVELY EXPLOITED
+              </span>
+            )}
+            {vuln.exploitAvailable && vuln.source !== 'CISA KEV' && (
+              <span className="px-2 py-1 text-xs font-medium bg-purple-900/50 text-purple-300 rounded-full border border-purple-500/50">
+                EXPLOIT AVAILABLE
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getSeverityColor(vuln.severity)}`}>
+              {vuln.severity}
+              {vuln.cvssScore && ` (${vuln.cvssScore})`}
+            </span>
+            {vuln.epssScore && (
+              <span className="px-2 py-1 text-xs bg-indigo-900/50 text-indigo-300 rounded-full border border-indigo-500/50">
+                EPSS: {(vuln.epssScore * 100).toFixed(1)}%
+              </span>
+            )}
+          </div>
+        </div>
+        
+        {/* Title */}
+        <h3 className="text-lg font-semibold text-green-100 mb-3 leading-tight">
+          {vuln.cveId && (
+            <span className="text-green-400 font-mono text-sm mr-2">{vuln.cveId}</span>
+          )}
+          <span>{vuln.title}</span>
+        </h3>
+        
+        {/* Description */}
+        <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+          {vuln.description.length > 180 
+            ? `${vuln.description.substring(0, 180)}...` 
+            : vuln.description}
+        </p>
+        
+        {/* Product Info */}
+        {(vuln.product || vuln.vendor) && (
+          <div className="mb-4 p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
+            <div className="text-xs text-green-400 uppercase tracking-wide font-medium mb-1">Affected Product</div>
+            <div className="font-medium text-gray-200">
+              {vuln.vendor && vuln.product ? `${vuln.vendor} ${vuln.product}` : vuln.product || vuln.vendor}
+            </div>
+          </div>
+        )}
+        
+        {/* Footer */}
+        <div className="flex justify-between items-center pt-4 border-t border-gray-700/50">
+          <div className="text-xs text-green-400/60 font-mono">
+            {formatTimeAgo(vuln.published)}
+          </div>
+          <a 
+            href={vuln.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-green-400 hover:text-green-300 text-sm font-medium transition-colors"
+          >
+            Technical Details
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+// Component for section header with category info
+function CategoryHeader({ title, description, count, icon, bgColor, borderColor }: {
+  title: string;
+  description: string;
+  count: number;
+  icon: string;
+  bgColor: string;
+  borderColor: string;
+}) {
+  return (
+    <div className={`${bgColor} backdrop-blur-sm rounded-xl border ${borderColor} shadow-lg p-6 mb-6`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="text-3xl">{icon}</div>
+          <div>
+            <h3 className="text-xl font-bold text-white mb-1">{title}</h3>
+            <p className="text-gray-300 text-sm">{description}</p>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-white">{count}</div>
+          <div className="text-sm text-gray-300">findings</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default async function Home() {
   const vulnerabilities = await fetchLatestVulnerabilities();
-  const cisaCount = vulnerabilities.filter(v => v.source === 'CISA KEV').length;
-  const nvdCount = vulnerabilities.filter(v => v.source === 'NVD').length;
-  const githubCount = vulnerabilities.filter(v => v.source === 'GitHub Security').length;
+  
+  // Separate vulnerabilities by source for better threat analysis
+  const cisaVulns = vulnerabilities.filter(v => v.source === 'CISA KEV');
+  const nvdVulns = vulnerabilities.filter(v => v.source === 'NVD');
+  const githubVulns = vulnerabilities.filter(v => v.source === 'GitHub Security');
+  
   const criticalCount = vulnerabilities.filter(v => v.severity === 'Critical').length;
   const exploitedCount = vulnerabilities.filter(v => v.exploitAvailable).length;
   
@@ -252,20 +365,14 @@ export default async function Home() {
                 </p>
               </div>
               <div className="hidden md:block ml-8 border-l border-green-500/30 pl-8">
-                <h2 className="text-lg font-semibold text-green-100">Vulnerability Tracker</h2>
-                <p className="text-sm text-green-300/60">Real-time vulnerability intelligence monitoring for active threats.</p>
+                <h2 className="text-lg font-semibold text-green-100">Threat Intelligence Dashboard</h2>
+                <p className="text-sm text-green-300/60">Continuous monitoring of exploitable vulnerabilities across critical infrastructure</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <form action={handleRefresh}>
-                <button 
-                  type="submit"
-                  className="inline-flex items-center gap-2 bg-green-600 text-black px-3 py-2 rounded-lg hover:bg-green-500 transition-all duration-200 shadow-sm font-medium text-sm"
-                >
-                  🔄 Refresh
-                </button>
               </form>
-              <a 
+                           <a 
                 href="/rss"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -282,164 +389,136 @@ export default async function Home() {
       </header>
 
       <main className="container mx-auto px-6 py-8 max-w-7xl">
-        {/* Hero Section with SECFORIT Theme */}
+        {/* Executive Summary Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-green-100 mb-4">
-            Live Security Intelligence
+            Active Threat Intelligence Feed
           </h1>
-          <p className="text-xl text-green-300/80 mb-2 max-w-3xl mx-auto">
-            Real-time vulnerability intelligence from CISA KEV, NVD, and GitHub Security Advisories
-          </p>
+
           <div className="inline-block scanner px-6 py-2 mb-8 border border-green-500/30 bg-green-500/5">
             <p className="text-sm text-green-400/80 font-mono tracking-wider">
-            Code by razvan @stefanini 
+              code by razvan @stefanini
             </p>
           </div>
 
           
-          {/* Stats Cards with SECFORIT Theme */}
+          {/* Threat Metrics Dashboard */}
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
             <div className="bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-green-500/30 shadow-sm">
               <div className="text-2xl font-bold text-green-400">{vulnerabilities.length}</div>
-              <div className="text-sm text-green-300/70">Total CVEs</div>
+              <div className="text-sm text-green-300/70">Total Tracked</div>
             </div>
             <div className="bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-red-500/30 shadow-sm">
-              <div className="text-2xl font-bold text-red-400">{cisaCount}</div>
-              <div className="text-sm text-red-300/70">CISA KEV</div>
+              <div className="text-2xl font-bold text-red-400">{cisaVulns.length}</div>
+              <div className="text-sm text-red-300/70">Active Exploits</div>
             </div>
             <div className="bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-blue-500/30 shadow-sm">
-              <div className="text-2xl font-bold text-blue-400">{nvdCount}</div>
-              <div className="text-sm text-blue-300/70">NVD Recent</div>
+              <div className="text-2xl font-bold text-blue-400">{nvdVulns.length}</div>
+              <div className="text-sm text-blue-300/70">High Severity</div>
             </div>
             <div className="bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-500/30 shadow-sm">
-              <div className="text-2xl font-bold text-gray-300">{githubCount}</div>
-              <div className="text-sm text-gray-400/70">GitHub</div>
+              <div className="text-2xl font-bold text-gray-300">{githubVulns.length}</div>
+              <div className="text-sm text-gray-400/70">Supply Chain</div>
             </div>
             <div className="bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-orange-500/30 shadow-sm">
               <div className="text-2xl font-bold text-orange-400">{criticalCount}</div>
-              <div className="text-sm text-orange-300/70">Critical</div>
+              <div className="text-sm text-orange-300/70">Critical Risk</div>
             </div>
             <div className="bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30 shadow-sm">
               <div className="text-2xl font-bold text-purple-400">{exploitedCount}</div>
-              <div className="text-sm text-purple-300/70">Exploited</div>
+              <div className="text-sm text-purple-300/70">In-the-Wild</div>
             </div>
           </div>
         </div>
 
-        {/* Vulnerabilities Grid with Dark Theme */}
+        {/* Threat Classification by Source */}
         {vulnerabilities.length > 0 ? (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-green-100">Latest Zero-Day & Critical Vulnerabilities</h2>
-              <div className="text-sm text-green-300/60 font-mono">
-                Last updated: {new Date().toLocaleString()}
-              </div>
+          <div className="space-y-12">
+            {/* Intelligence Update Timestamp */}
+            <div className="text-center text-sm text-green-300/60 font-mono">
+              Intelligence last updated: {new Date().toLocaleString()} UTC
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {vulnerabilities.map((vuln) => (
-                <article key={vuln.id} className="bg-gray-900/80 backdrop-blur-sm rounded-xl border border-green-500/20 shadow-lg hover:shadow-xl hover:border-green-500/40 transition-all duration-200 overflow-hidden">
-                  <div className="p-6">
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getSourceBadge(vuln.source)}`}>
-                          {vuln.source}
-                        </span>
-                        {vuln.source === 'CISA KEV' && (
-                          <span className="px-2 py-1 text-xs font-medium bg-red-900/50 text-red-300 rounded-full border border-red-500/50">
-                            ACTIVELY EXPLOITED
-                          </span>
-                        )}
-                        {vuln.exploitAvailable && vuln.source !== 'CISA KEV' && (
-                          <span className="px-2 py-1 text-xs font-medium bg-purple-900/50 text-purple-300 rounded-full border border-purple-500/50">
-                            EXPLOIT AVAILABLE
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getSeverityColor(vuln.severity)}`}>
-                          {vuln.severity}
-                          {vuln.cvssScore && ` (${vuln.cvssScore})`}
-                        </span>
-                        {vuln.epssScore && (
-                          <span className="px-2 py-1 text-xs bg-indigo-900/50 text-indigo-300 rounded-full border border-indigo-500/50">
-                            EPSS: {(vuln.epssScore * 100).toFixed(1)}%
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* Title */}
-                    <h3 className="text-lg font-semibold text-green-100 mb-3 leading-tight">
-                      {vuln.cveId && (
-                        <span className="text-green-400 font-mono text-sm mr-2">{vuln.cveId}</span>
-                      )}
-                      <span>{vuln.title}</span>
-                    </h3>
-                    
-                    {/* Description */}
-                    <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                      {vuln.description.length > 180 
-                        ? `${vuln.description.substring(0, 180)}...` 
-                        : vuln.description}
-                    </p>
-                    
-                    {/* Product Info */}
-                    {(vuln.product || vuln.vendor) && (
-                      <div className="mb-4 p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                        <div className="text-xs text-green-400 uppercase tracking-wide font-medium mb-1">Affected Product</div>
-                        <div className="font-medium text-gray-200">
-                          {vuln.vendor && vuln.product ? `${vuln.vendor} ${vuln.product}` : vuln.product || vuln.vendor}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Footer */}
-                    <div className="flex justify-between items-center pt-4 border-t border-gray-700/50">
-                      <div className="text-xs text-green-400/60 font-mono">
-                        {formatTimeAgo(vuln.published)}
-                      </div>
-                      <a 
-                        href={vuln.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-green-400 hover:text-green-300 text-sm font-medium transition-colors"
-                      >
-                        View Details
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
+            {/* CISA Known Exploited Vulnerabilities - Priority Alpha */}
+            {cisaVulns.length > 0 && (
+              <section>
+                <CategoryHeader
+                  title="CISA Known Exploited Vulnerabilities"
+                  description="Active exploitation confirmed by CISA, requiring immediate attention"
+                  count={cisaVulns.length}
+                  icon="⚠️"
+                  bgColor="bg-gradient-to-r from-red-900/40 to-red-800/30"
+                  borderColor="border-red-500/30"
+                />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {cisaVulns.map((vuln) => (
+                    <VulnerabilityCard key={vuln.id} vuln={vuln} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* National Vulnerability Database - Recent High Impact */}
+            {nvdVulns.length > 0 && (
+              <section>
+                <CategoryHeader
+                  title="National Vulnerability Database (NVD)"
+                  description="Recently disclosed high-severity vulnerabilities requiring assessment and patching"
+                  count={nvdVulns.length}
+                  icon="🛡️"
+                  bgColor="bg-gradient-to-r from-blue-900/40 to-blue-800/30"
+                  borderColor="border-blue-500/30"
+                />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {nvdVulns.map((vuln) => (
+                    <VulnerabilityCard key={vuln.id} vuln={vuln} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* GitHub Security Advisories - Supply Chain Threats */}
+            {githubVulns.length > 0 && (
+              <section>
+                <CategoryHeader
+                  title="GitHub Security Advisories"
+                  description="Open source package vulnerabilities affecting development and production environments"
+                  count={githubVulns.length}
+                  icon="📦"
+                  bgColor="bg-gradient-to-r from-gray-800/40 to-gray-700/30"
+                  borderColor="border-gray-500/30"
+                />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {githubVulns.map((vuln) => (
+                    <VulnerabilityCard key={vuln.id} vuln={vuln} />
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         ) : (
-          /* No Data State */
+          /* Data Unavailable State */
           <div className="text-center py-16">
             <div className="text-6xl mb-6">🔍</div>
-            <h2 className="text-2xl font-semibold text-green-100 mb-4">No Vulnerabilities Available</h2>
+            <h2 className="text-2xl font-semibold text-green-100 mb-4">Intelligence Feed Temporarily Unavailable</h2>
             <p className="text-green-300/70 mb-6 max-w-md mx-auto">
-              Unable to fetch vulnerability data from our sources at this time. Please check back later.
+              Unable to retrieve current threat intelligence from configured sources. Data feeds may be experiencing temporary issues.
             </p>
             <form action={handleRefresh}>
               <button 
                 type="submit"
                 className="bg-green-600 text-black px-6 py-3 rounded-lg hover:bg-green-500 transition-colors font-medium"
               >
-                Retry Loading
+                Retry Data Collection
               </button>
             </form>
           </div>
         )}
 
-        {/* Data Sources Section with SECFORIT Theme */}
+        {/* Intelligence Sources & Methodology */}
         <section className="mt-16 bg-gray-900/60 backdrop-blur-sm rounded-2xl border border-green-500/20 shadow-lg overflow-hidden">
           <div className="p-8">
-            <h2 className="text-2xl font-bold text-green-100 mb-6 text-center">Trusted Intelligence Sources</h2>
+            <h2 className="text-2xl font-bold text-green-100 mb-6 text-center">Authoritative Threat Intelligence Sources</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="p-6 bg-gradient-to-br from-red-900/30 to-red-800/20 rounded-xl border border-red-500/30">
                 <div className="flex items-center mb-3">
@@ -447,11 +526,11 @@ export default async function Home() {
                   <h3 className="text-lg font-semibold text-red-300">CISA Known Exploited Vulnerabilities</h3>
                 </div>
                 <p className="text-red-200/80 text-sm leading-relaxed">
-                  Authoritative source of vulnerabilities actively exploited in the wild. 
-                  Federal agencies must prioritize remediation of these CVEs.
+                  Authoritative catalog of vulnerabilities with confirmed active exploitation. 
+                  Federal agencies mandated to remediate within specified timeframes per Binding Operational Directive 22-01.
                 </p>
                 <div className="mt-3 text-xs text-red-400/80 font-medium">
-                  Updated: Daily by CISA
+                  Update Frequency: Daily • Source: CISA
                 </div>
               </div>
               
@@ -461,11 +540,11 @@ export default async function Home() {
                   <h3 className="text-lg font-semibold text-blue-300">National Vulnerability Database</h3>
                 </div>
                 <p className="text-blue-200/80 text-sm leading-relaxed">
-                  U.S. government repository of standards-based vulnerability management data 
-                  with comprehensive CVE information and CVSS scoring.
+                  Comprehensive vulnerability management repository maintained by NIST. 
+                  Provides standardized vulnerability data including CVSS scoring, CWE classification, and impact assessment.
                 </p>
                 <div className="mt-3 text-xs text-blue-400/80 font-medium">
-                  Updated: Continuously by NIST
+                  Update Frequency: Continuous • Source: NIST
                 </div>
               </div>
               
@@ -475,11 +554,11 @@ export default async function Home() {
                   <h3 className="text-lg font-semibold text-gray-300">GitHub Security Advisories</h3>
                 </div>
                 <p className="text-gray-200/80 text-sm leading-relaxed">
-                  Community-driven vulnerability database covering open source 
-                  packages across 15+ ecosystems with manual review process.
+                  Community-driven vulnerability database covering open source packages across multiple ecosystems. 
+                  Critical for supply chain risk assessment and dependency management strategies.
                 </p>
                 <div className="mt-3 text-xs text-gray-400/80 font-medium">
-                  Updated: Real-time by GitHub
+                  Update Frequency: Real-time • Source: GitHub
                 </div>
               </div>
             </div>
@@ -487,7 +566,7 @@ export default async function Home() {
         </section>
       </main>
 
-      {/* Footer with SECFORIT Branding */}
+      {/* Footer */}
       <footer className="border-t border-green-500/20 bg-black/60 backdrop-blur-sm mt-16">
         <div className="container mx-auto px-6 py-8">
           <div className="text-center">
@@ -506,8 +585,8 @@ export default async function Home() {
               BREAK CODE, NOT SECURITY!
             </p>
             <p className="text-gray-400 text-sm mb-4">
-              Data sourced from official U.S. government and trusted security databases. 
-              For the most current information, always refer to the original sources.
+              Threat intelligence aggregated from official U.S. government databases and trusted security repositories. 
+              Analysis methodology follows industry standard frameworks for vulnerability assessment and risk prioritization.
             </p>
             <div className="flex justify-center space-x-6">
               <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" 
