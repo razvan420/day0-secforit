@@ -397,7 +397,7 @@ export default async function Home() {
 
           <div className="inline-block scanner px-6 py-2 mb-8 border border-green-500/30 bg-green-500/5">
             <p className="text-sm text-green-400/80 font-mono tracking-wider">
-              code by razvan @stefanini
+              code by <b>razvan</b> @Stefanini CERT Team
             </p>
           </div>
 
