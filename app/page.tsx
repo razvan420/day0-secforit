@@ -436,7 +436,7 @@ export default async function Home() {
           <div className="space-y-12">
             {/* Intelligence Update Timestamp */}
             <div className="text-center text-sm text-green-300/60 font-mono">
-              Intelligence last updated: {new Date().toLocaleString()} UTC
+               Last updated: {new Date().toLocaleString()} UTC
             </div>
             
             {/* CISA Known Exploited Vulnerabilities - Priority Alpha */}
